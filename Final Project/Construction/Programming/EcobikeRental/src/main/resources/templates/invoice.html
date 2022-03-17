@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hóa đơn</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"></script>
+    <script type="text/javascript" th:src="@{/js/main.js}" src="../static/js/main.js"></script>
+    <script type="text/javascript" th:src="@{/js/checkIdBike.js}" src="../static/js/checkIdBike.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+    h1 {
+      text-align:center;
+    }
+
+
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Hóa đơn
+        <th:block th:utext="${invoice.id}"/>
+    </h2>
+    <div>
+        Bãi trả xe:
+        <th:block th:utext="${parking.nameParking}"/>
+        <br>
+        Mã xe trả:
+        <th:block th:utext="${bike.id}"/>
+        <br>
+        Loại xe:
+        <th:block th:utext="${bike.categoryBike.categoryBike}"/>
+        <br>
+        Thời gian bắt đầu thuê:
+        <th:block th:utext="${rental.timeStart}"/>
+        <br>
+        Thời gian kết thúc thuê:
+        <th:block th:text="${rental.timeEnd}"/>
+        <br>
+        Tổng thời gian đã thuê:
+        <th:block th:text="${rentTime} + ' phút'"/>
+        <br>
+        Số tiền đã cọc:
+        <th:block th:utext="${rental.deposits}+' vnd'"/>
+        <br>
+        Tổng số tiền:
+        <th:block th:utext="${invoice.rentMoney}+' vnd'"/>
+        <br>
+    </div>
+</div>
+<h1>Thông tin thanh toán trả xe</h1>
+<div class="container">
+    <div class="myPay">
+        <form th:action="@{/processTransaction/returnBike}" method="POST" id="payForm">
+            <th:block th:include="common/transactionCommon"></th:block>
+            <script>
+$(document).ready(
+    function() {
+        $("#payForm").submit(function(event) {
+            event.preventDefault();
+            pay();
+        });
+
+        function pay() {
+            var formData = {
+                owner : $("#owner").val(),
+                cardCode : $("#cardCode").val(),
+                cvvCode : $("#cvvCode").val(),
+                dateExpired : $("#dateExpired").val(),
+                amount : $("#amount").val(),
+                transactionContent : $("#transactionContent").val(),
+            }
+            console.log(formData);
+            $.ajax({
+                type : "POST",
+                contentType : "application/json",
+                url : '/processTransaction/returnBike?owner=' + formData.owner + '&cardCode=' + formData.cardCode + '&cvvCode=' + formData.cvvCode + '&dateExpired=' + formData.dateExpired + '&amount=' + formData.amount + '&transactionContent=' + formData.transactionContent + '&bike=' + [[${bike.id}]] + '&parking=' + [[${parking.id}]],
+                data : JSON.stringify(formData),
+                dataType : 'json',
+                success : function(result) {
+                    switch (result.errorCode)
+                    {
+                        case "00" : {
+                            $('#transactionSuccess').modal();
+                            break;
+                        }
+                        case "01" : {
+                            document.getElementById("error").innerHTML = "Thẻ không hợp lệ!";
+                            $('#transactionError').modal();
+                            break;
+                        }
+                         case "02" : {
+                            document.getElementById("error").innerHTML = "Thẻ không đủ số dư!";
+                            $('#transactionError').modal();
+                            break;
+                        }
+                         case "03" : {
+                            document.getElementById("error").innerHTML = "Internal server Error!";
+                            $('#transactionError').modal();
+                            break;
+                        } case "04" : {
+                            document.getElementById("error").innerHTML = "Giao dịch bị nghi ngờ gian lận!",
+                            $('#transactionError').modal();
+                            break;
+                        }
+                        case "05" : {
+                            document.getElementById("error").innerHTML = "Không đủ thông tin giao dịch!";
+                            $('#transactionError').modal();
+                            break;
+                        }
+                         case "06" : {
+                            document.getElementById("error").innerHTML = "Thiếu thông tin version!";
+                            $('#transactionError').modal();
+                            break;
+                        }
+                         case "07" : {
+                            document.getElementById("error").innerHTML = "Amount không hợp lệ";
+                            $('#transactionError').modal();
+                            break;
+                        }
+                        default : {
+                            document.getElementById("error").innerHTML = "Lỗi";
+                            $('#transactionError').modal();
+                        }
+                    }
+                    console.log(result)
+                },
+                error : function(e) {
+                    document.getElementById("errorNotice").innerHTML = "Vui lòng thanh toán đủ " + e.responseText + "vnd";
+                    $('#errorAmount').modal();
+                    console.log(e)
+                }
+            });
+        }
+    });
+
+            </script>
+</body>
+</html>

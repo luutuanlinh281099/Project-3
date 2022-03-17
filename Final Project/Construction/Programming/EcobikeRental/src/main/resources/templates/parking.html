@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Bãi xe</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"></script>
+    <script type="text/javascript" th:src="@{/js/main.js}" src="../static/js/main.js"></script>
+    <script type="text/javascript" th:src="@{/js/checkIdBike.js}" src="../static/js/checkIdBike.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+    h1 {
+      text-align:center;
+    }
+
+    </style>
+</head>
+<body>
+<h1>DANH SÁCH BÃI XE</h1>
+<div class="container">
+    <div>
+        <p th:if="${bike}" style="color:red">Vui lòng trả xe nếu muốn thuê!</p>
+        <button th:unless="${bike}" class="btn btn-primary rentalBtn" id="thueXeBtn">Thuê xe</button>
+    </div>
+    <div>
+        <div class="card-block">
+            <table id="tableParking" class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th>Tên bãi</th>
+                    <th>Vị trí</th>
+                    <th>Tổng số ô chứa</th>
+                    <th>Số ô trống</th>
+                    <th>Chi tiết bãi</th>
+                    <th th:if="${bike}">Trả xe</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="parking :${parkings}">
+                    <td th:text="${parking.nameParking}"></td>
+                    <td th:text="${parking.address}"></td>
+                    <td th:text="${parking.totalCellContains}"></td>
+                    <td th:text="${parking.cellEmpty}"></td>
+                    <td><a th:href="@{/parking/{id}(id=${parking.id})}" class="btn btn-primary delBtn">Xem bãi</a></td>
+                    <td th:if="${bike}"><a th:href="@{/findParking/{id}(id=${parking.id})}"
+                                           class="btn btn-primary returnBikeBtn">Trả
+                        xe</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="rentalBike">
+        <form th:action="@{/bike}" method="POST" id="rentalBikeForm">
+            <div class="modal fade" id="iRentalBike" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog" role="document" id="dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Nhập mã xe</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="idCodeBike" class="col-form-label">Vui lòng nhập mã xe muốn thuê: </label>
+                                <input type="text" class="form-control" id="idCodeBike" name="idCodeBike" value="">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <input type="submit" class="btn btn-primary" value="Xác nhận"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="common/infoBike"></th:block>
+    <div class="modal fade" id="cellEmptyNull" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:red;">
+                    <h5 class="modal-title">Thông báo!</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Bãi xe này không còn chỗ trống vui lòng chọn bãi khác! </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="hadRentalBike" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header" style="background-color:red;">
+                    <h5 class="modal-title">Thông báo!</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p>Bạn chỉ được phép thuê một xe vui lòng trả xe trước khi thuê! </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $('#tableParking').dataTable({});
+        $("body").on("click", ".returnBikeBtn", function(){
+            event.preventDefault();
+            var href = $(this).attr('href');
+            $.get(href,function(parking,status){
+                if(parking.cellEmpty>0){
+                    window.open("/returnBike?id="+parking.id, '_self');
+                }
+                else $('#cellEmptyNull').modal();
+            });
+        });
+
+        $("body").on("click", ".rentalBtn", function(){
+            event.preventDefault();
+            $('.rentalBike #iRentalBike').modal();
+        });
+    });
+
+</script>
+</body>
+</html>

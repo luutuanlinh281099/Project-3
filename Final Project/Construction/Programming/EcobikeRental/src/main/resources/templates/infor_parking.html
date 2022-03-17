@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thông tin bãi xe</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css"></script>
+    <script th:inline="javascript" th:src="@{/js/main.js}" src="../static/js/main.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <style>
+    h1, h2 {
+      text-align:center;
+    }
+
+    </style>
+</head>
+<body>
+<h1>Thông tin bãi xe số
+    <th:block th:utext="${parking.id}"/>
+</h1>
+<div class="container">
+    <div>
+        <button class="btn btn-primary" onclick="window.location.href='/'">Bãi xe</button>
+    </div>
+    <br>
+    <div>
+        Tên bãi:
+        <th:block th:utext="${parking.nameParking}"/>
+        <br>
+        Vị trí:
+        <th:block th:utext="${parking.address}"/>
+        <br>
+        Số ô chứa trong bãi:
+        <th:block th:utext="${parking.totalCellContains}"/>
+        <br>
+        Số ô trống:
+        <th:block th:utext="${parking.cellEmpty}"/>
+        <br>
+    </div>
+    <h2>Danh sách xe có trong bãi</h2>
+    <div>
+        <div class="card-block">
+            <table id="tableBike" class="table table-hover table-bordered">
+                <thead>
+                <tr>
+                    <th>Mã xe</th>
+                    <th>Loại xe</th>
+                    <th>Giá xe</th>
+                    <th>Dung Lượng pin (Đơn vị mA)</th>
+                    <th>Trạng thái thuê</th>
+                    <th>Chi tiết Xe</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="bike :${bikes}">
+                    <td th:text="${bike.id}"></td>
+                    <td th:text="${bike.categoryBike.categoryBike}"></td>
+                    <td th:text="${bike.categoryBike.priceBike}+' vnd'"></td>
+                    <td th:if="${bike.energy}!=0" th:text="${bike.energy}"></td>
+                    <td th:if="${bike.energy}==0">Xe không có pin</td>
+                    <td th:if="!${bike.status}">Chưa được thuê</td>
+                    <td th:if="${bike.status}">Đã được thuê</td>
+                    <td><a th:href="@{/bike/{id}(id=${bike.id})}" class="btn btn-primary viewBikeBtn">Xem xe</a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <th:block th:include="common/infoBike"></th:block>
+    <script>
+        $(document).ready(function() {
+            $('#tableBike').dataTable({});
+        });
+
+
+    </script>
+</div>
+</body>
+</html>

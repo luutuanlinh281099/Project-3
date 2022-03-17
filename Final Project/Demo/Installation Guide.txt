@@ -1,0 +1,5 @@
+Web được code bằng intellij sử dụng JDK14
+Công nghệ sử dụng:Spring boot, thymeleaf, JPA, html, css, boostrap, javascript
+Database: mySQL với username: root, password:123456
+Để chạy web yêu cầu máy tính có thể chạy được intellij, trình duyệt web hỗ trợ html5, javascript
+Intellij cần được cài đặt spring boot, maven và lombok

@@ -1,0 +1,93 @@
+<div class="modal-body">
+    <div class="form-group">
+        <label for="owner" class="col-form-label">Tên chủ thẻ: </label>
+        <input type="text" class="form-control" id="owner" name="owner"
+               placeholder="Tên chủ thẻ">
+    </div>
+    <div class="form-group">
+        <label for="cardCode" class="col-form-label">Mã thẻ: </label>
+        <input type="text" class="form-control" id="cardCode" name="cardCode" placeholder="Mã thẻ">
+    </div>
+    <div class="form-group">
+        <label for="cvvCode" class="col-form-label">cvvCode: </label>
+        <input type="text" class="form-control" id="cvvCode" name="cvvCode"
+               placeholder="cvvCode">
+    </div>
+    <div class="form-group">
+        <label for="dateExpired" class="col-form-label">Ngày hết hạn: </label>
+        <input type="text" class="form-control" id="dateExpired" name="dateExpired"
+               placeholder="Ngày hết hạn thẻ">
+    </div>
+    <div class="form-group">
+        <label for="amount" class="col-form-label">Số tiền giao dịch: </label>
+        <input type="number" class="form-control" id="amount" name="amount"
+               placeholder="Số tiền giao dịch">
+        <span style="color:red">Chú ý:</span>
+        <br>
+        <span style="color:red">- Nếu bạn thuê xe vui lòng đặt cọc số tiền bằng 40% giá xe muốn thuê. Tiền cọc sẽ được trả lại vào tài khoản khi bạn trả xe</span>
+        <br>
+        <span style="color:red">- Nếu bạn trả xe vui lòng thanh toán đủ tổng số tiền trên hóa đơn</span>
+    </div>
+    <div class="form-group">
+        <label for="transactionContent" class="col-form-label">Nội dung giao dịch: </label>
+        <input type="text" class="form-control" id="transactionContent" name="transactionContent"
+               placeholder="Nội dung giao dịch">
+    </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" onclick="window.location.href='/'">Hủy</button>
+    <input type="submit" class="btn btn-primary" id="pay" value="Thanh toán"/>
+</div>
+</form>
+</div>
+<div class="modal fade" id="transactionSuccess" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:green;">
+                <h5 class="modal-title">Thanh toán thành công!</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-footer">
+                <a th:href="@{/}" class="btn btn-success">Đóng</a>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal fade" id="transactionError" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:red;">
+                <h5 class="modal-title">Thanh toán thất bại!</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="error"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+</div>
+<div class="modal fade" id="errorAmount" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:red;">
+                <h5 class="modal-title">Lỗi!</h5>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="errorNotice"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
